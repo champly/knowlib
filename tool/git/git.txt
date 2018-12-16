@@ -1,0 +1,502 @@
+安装好git配置全局的环境：
+git config --global user.name "Your Name"
+git config --global user.email "email@example.com"
+
+初始化本地git仓库：
+======================================================
+$ git init
+初始化空的 Git 仓库于 /home/champly/learngit/.git/
+======================================================
+
+创建一个readme.txt文件：
+vim readme.txt	=>
+Git is a version control system.
+Git is free software.
+
+1、把文件添加到仓库：
+======================================================
+$ git add readme.txt
+======================================================
+
+2、把文件提交到仓库：
+======================================================
+$ git commit -m "wrote a readme file"                 
+[master （根提交） be5acd4] wrote a readme file
+ 1 file changed, 2 insertions(+)
+ create mode 100644 readme.txt
+======================================================
+	-m: 本次提交的说明
+	说明：commit可以一次提交很多文件，可以多次add，一次commit
+
+查看现在的git工作区状态：
+======================================================
+$ git status
+位于分支 master
+无文件要提交，干净的工作区
+======================================================
+
+修改readme.txt文件，之后执行git status：
+======================================================
+$ git status
+位于分支 master
+尚未暂存以备提交的变更：
+  （使用 "git add <文件>..." 更新要提交的内容）
+  （使用 "git checkout -- <文件>..." 丢弃工作区的改动）
+
+	修改：     readme.txt
+
+修改尚未加入提交（使用 "git add" 和/或 "git commit -a"）
+======================================================
+
+查看修改的具体内容，git diff：
+======================================================
+diff --git a/readme.txt b/readme.txt
+index 46d49bf..05e6349 100644
+--- a/readme.txt
++++ b/readme.txt
+@@ -1,2 +1,3 @@
+ Git is a version control system.
+ Git is free software.
++Git is a distributed version control system.
+(END)
+======================================================
+
+再次git add readme.txt之后查看git状态：
+======================================================
+$ git status
+位于分支 master
+要提交的变更：
+  （使用 "git reset HEAD <文件>..." 以取消暂存）
+
+	修改：     readme.txt
+
+======================================================
+
+再次提交到仓库：
+======================================================
+$ git commit -m "add distributed"
+[master 72eac27] add distributed
+ 1 file changed, 1 insertion(+)
+======================================================
+
+git log查看历史记录：
+======================================================
+commit 831e12e0807a7824ee05967b691aa9532726df24
+Author: ChamPly <champly@outlook.com>
+Date:   Fri Aug 18 14:45:43 2017 +0800
+
+    version 3
+
+commit 72eac27770531f96b717fce93349f8e93c7e67b8
+Author: ChamPly <champly@outlook.com>
+Date:   Fri Aug 18 14:42:45 2017 +0800
+
+    add distributed
+
+commit be5acd46cfbcb7d50a1a6d248cde553f53515e68
+Author: ChamPly <champly@outlook.com>
+Date:   Fri Aug 18 14:06:05 2017 +0800
+
+    wrote a readme file
+(END)
+======================================================
+
+git log --pretty=oneline简化历史记录输出信息：
+======================================================
+831e12e0807a7824ee05967b691aa9532726df24 version 3
+72eac27770531f96b717fce93349f8e93c7e67b8 add distributed
+be5acd46cfbcb7d50a1a6d248cde553f53515e68 wrote a readme file
+(END)
+======================================================
+
+
+退回"add distributed"版本的内容：
+======================================================
+$ git reset --hard 72eac27770531f96b717fce93349f8e93c7e67b8
+HEAD 现在位于 72eac27 add distributed
+======================================================
+git log:
+======================================================
+commit 72eac27770531f96b717fce93349f8e93c7e67b8
+Author: ChamPly <champly@outlook.com>
+Date:   Fri Aug 18 14:42:45 2017 +0800
+
+    add distributed
+
+commit be5acd46cfbcb7d50a1a6d248cde553f53515e68
+Author: ChamPly <champly@outlook.com>
+Date:   Fri Aug 18 14:06:05 2017 +0800
+
+    wrote a readme file
+======================================================
+
+退回到上一个版本，hard后面可以只输入一部分：
+======================================================
+# champly @ champly in ~/learngit on git:master o [15:25:43] 
+$ git reset --hard 831e
+HEAD 现在位于 831e12e version 3
+
+# champly @ champly in ~/learngit on git:master o [15:26:19] 
+$ cat readme.txt 
+Git is a version control system.
+Git is free software distributed under the GPL.
+Git is a distributed version control system.
+======================================================
+
+查看git的日志：git reflog：
+======================================================
+831e12e HEAD@{0}: reset: moving to 831e
+72eac27 HEAD@{1}: reset: moving to 72eac27770531f96b717fce93349f8e93c7e67b8
+831e12e HEAD@{2}: commit: version 3
+72eac27 HEAD@{3}: commit: add distributed
+be5acd4 HEAD@{4}: commit (initial): wrote a readme file
+(END)
+======================================================
+
+git log 查看提交历史
+git reflog 查看命令历史
+
+git add 把文件添加进去，实际上就是把文件修改添加到暂存区
+git commit 提交更改，实际上就是把暂存的所有内容提交到当前分支
+
+修改readme.txt文件，添加一个新文件license，然后执行git status：
+======================================================
+$ git status
+位于分支 master
+尚未暂存以备提交的变更：
+  （使用 "git add <文件>..." 更新要提交的内容）
+  （使用 "git checkout -- <文件>..." 丢弃工作区的改动）
+
+	修改：     readme.txt
+
+未跟踪的文件:
+  （使用 "git add <文件>..." 以包含要提交的内容）
+
+	license
+
+修改尚未加入提交（使用 "git add" 和/或 "git commit -a"）
+======================================================
+
+git checkout --filename，可以丢弃工作区的修改
+一种是自然修改后没有被放到暂存去，现在，撤销修改就是回到和版本库一模一样的状态；
+一种是已经添加到暂存区后，又作了修改，现在，撤销修改就回到添加到暂存区后的状态。
+总之，就是让这个文件回到最近一次git commit或git add时的状态。
+
+删除一个文件，然后git status：
+======================================================
+$ git status
+位于分支 master
+尚未暂存以备提交的变更：
+  （使用 "git add/rm <文件>..." 更新要提交的内容）
+  （使用 "git checkout -- <文件>..." 丢弃工作区的改动）
+
+	删除：     test.txt
+======================================================
+使用 git rm test.txt:
+======================================================
+$ git rm test.txt
+rm 'test.txt'
+======================================================
+然后 git status：
+======================================================
+$ git status
+位于分支 master
+要提交的变更：
+  （使用 "git reset HEAD <文件>..." 以取消暂存）
+
+	删除：     test.txt
+======================================================
+要使用git commit才能提交删除
+
+
+远程仓库（github.com）：
+将本地仓库和github仓库关联起来
+git remote add origin git@github.com:accountName/learngit.git
+把本地仓库的内容推送到远程
+(git pull origin master --allow-unrelated-histories 如果本地和远程分支不一样的话加上这个)
+git push -u origin master
+加上-u会把本地master分支内容推送到远程新的master分支，还会把本地的master分支和远程的master分支关联起来，
+以后使用：git push origin master:
+======================================================
+$ git push -u origin master
+Warning: Permanently added the RSA host key for IP address '192.30.255.113' to the list of known hosts.
+Counting objects: 3, done.
+Writing objects: 100% (3/3), 259 bytes | 0 bytes/s, done.
+Total 3 (delta 0), reused 0 (delta 0)
+To github.com:champly/learngit.git
+ * [new branch]      master -> master
+Branch master set up to track remote branch master from origin.
+======================================================
+就可以把本地最新的master分支推送到github上面
+总结：
+关联远程仓库：git remote add origin git@server-name:path/repo-name.git
+第一次推送master分支所有内容:git push -u origin master
+以后修改：git push origin master
+
+
+从远程仓库获取代码：
+git clone git@github.com:accountName/learngit.git:
+======================================================
+$ git clone git@github.com:ChamPly/learngit.git
+Cloning into 'learngit'...
+remote: Counting objects: 3, done.
+remote: Total 3 (delta 0), reused 3 (delta 0), pack-reused 0
+Receiving objects: 100% (3/3), done.
+======================================================
+git支持多种协议，包括https，ssh，但是通过ssh支持原生git协议速度最快
+
+
+git创建分支，git checkout -b:
+======================================================
+# champly @ ChamPlydeMacBook-Pro in ~/src/go/learngit on git:master o [21:53:31]
+$ git checkout -b develop
+Switched to a new branch 'develop'
+
+# champly @ ChamPlydeMacBook-Pro in ~/src/go/learngit on git:develop o [21:54:58]
+$
+======================================================
+git checkout 加上-b表示创建并切换，相当于：
+git branch develop
+git checkout develop
+
+git branch 查看当前分支：
+======================================================
+$ git branch
+* develop
+  master
+======================================================
+
+git merge develop把develop分之合并到master:
+======================================================
+$ git merge develop
+Updating da671bb..f487454
+Fast-forward
+ readme.txt | 1 +
+ 1 file changed, 1 insertion(+)
+======================================================
+
+git branch -d develop,删除develop分之：
+======================================================
+# champly @ ChamPlydeMacBook-Pro in ~/src/go/learngit on git:master o [22:00:39]
+$ git branch -d develop
+Deleted branch develop (was f487454).
+
+# champly @ ChamPlydeMacBook-Pro in ~/src/go/learngit on git:master o [22:01:10]
+$ git branch
+* master
+======================================================
+因为创建，合并分支非常快，所以git鼓励你使用分支完成某个任务，合并分支后再删掉，这和志杰在master分支上工作效果是一样段，但过程更安全。
+总结：
+git branch 查看分支
+git branch name 创建分支
+git checkout name 切换分支
+git checkout -b name 创建+切换分支
+git merge name 合并某分支到当前分支
+git branch -d name 删除分支
+
+创建一个feature分支，修改readme.txt，提交，切换master，修改readme.txt提交：
+======================================================
+# champly @ ChamPlydeMacBook-Pro in ~/src/go/learngit on git:feature x [22:10:41]
+$ git commit -m "change simple"
+[feature 5bd589f] change simple
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+# champly @ ChamPlydeMacBook-Pro in ~/src/go/learngit on git:feature o [22:10:54]
+$ git checkout master
+Switched to branch 'master'
+Your branch is ahead of 'origin/master' by 2 commits.
+  (use "git push" to publish your local commits)
+
+# champly @ ChamPlydeMacBook-Pro in ~/src/go/learngit on git:master o [22:11:07]
+$ vim readme.txt
+
+# champly @ ChamPlydeMacBook-Pro in ~/src/go/learngit on git:master x [22:11:27]
+$
+
+# champly @ ChamPlydeMacBook-Pro in ~/src/go/learngit on git:master x [22:11:27]
+$ git add readme.txt
+
+# champly @ ChamPlydeMacBook-Pro in ~/src/go/learngit on git:master x [22:11:33]
+$ git commit -m "blank end"
+[master ac63ece] blank end
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+======================================================
+
+然后合并，产生冲突：
+======================================================
+$ git merge feature
+
+
+
+
+
+Auto-merging readme.txt
+CONFLICT (content): Merge conflict in readme.txt
+Automatic merge failed; fix conflicts and then commit the result.
+======================================================
+
+查看git status：
+======================================================
+$ git status
+On branch master
+Your branch is ahead of 'origin/master' by 3 commits.
+  (use "git push" to publish your local commits)
+You have unmerged paths.
+  (fix conflicts and run "git commit")
+  (use "git merge --abort" to abort the merge)
+
+Unmerged paths:
+  (use "git add <file>..." to mark resolution)
+
+	both modified:   readme.txt
+
+no changes added to commit (use "git add" and/or "git commit -a")
+$ cat readme.txt
+Git is a free software
+<<<<<<< HEAD
+Creating a new branch is quick and simple .
+=======
+Creating a news branch is  quick and simple.
+>>>>>>> feature
+======================================================
+
+修改之后在提交,然后看看修改分支的情况：
+======================================================
+$ git log --graph --pretty=oneline --abbrev-commit
+*   6aa11ea conflict fixed
+|\
+| * 5bd589f change simple
+* | ac63ece blank end
+|/
+* 1e98fab and simple
+* f487454 branch
+* da671bb add readme file
+(END)
+======================================================
+git log --graph 可以看到分支合并图
+git merge --no-ff -m "commit content" name:使用普通模式合并分支
+
+
+修复bug，创建分支，保存当前修改内容：
+======================================================
+# champly @ ChamPlydeMacBook-Pro in ~/src/go/learngit on git:develop x [22:26:29]
+$ git stash
+Saved working directory and index state WIP on develop: 6aa11ea conflict fixed
+HEAD is now at 6aa11ea conflict fixed
+
+# champly @ ChamPlydeMacBook-Pro in ~/src/go/learngit on git:develop o [22:26:33]
+$ git status
+On branch develop
+nothing to commit, working tree clean
+
+# champly @ ChamPlydeMacBook-Pro in ~/src/go/learngit on git:develop o [22:26:49]
+$ git checkout master
+Switched to branch 'master'
+Your branch is ahead of 'origin/master' by 5 commits.
+  (use "git push" to publish your local commits)
+
+# champly @ ChamPlydeMacBook-Pro in ~/src/go/learngit on git:master o [22:27:50] C:129
+$ git checkout -b issue-101
+Switched to a new branch 'issue-101'
+
+# champly @ ChamPlydeMacBook-Pro in ~/src/go/learngit on git:issue-101 x [22:29:23]
+$ git checkout master
+M	readme.txt
+Switched to branch 'master'
+Your branch is ahead of 'origin/master' by 5 commits.
+  (use "git push" to publish your local commits)
+
+# champly @ ChamPlydeMacBook-Pro in ~/src/go/learngit on git:master x [22:30:31] C:129
+$ git merge --no-ff -m "merged bug fix 101" issue-101
+Already up-to-date.
+
+# champly @ ChamPlydeMacBook-Pro in ~/src/go/learngit on git:master x [22:30:40]
+$ git checkout develop
+M	readme.txt
+Switched to branch 'develop'
+
+# champly @ ChamPlydeMacBook-Pro in ~/src/go/learngit on git:develop x [22:31:40]
+$ git status
+On branch develop
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git checkout -- <file>..." to discard changes in working directory)
+
+	modified:   readme.txt
+
+no changes added to commit (use "git add" and/or "git commit -a")
+
+# champly @ ChamPlydeMacBook-Pro in ~/src/go/learngit on git:develop x [22:31:49]
+$ git stash list
+stash@{0}: WIP on develop: 6aa11ea conflict fixed
+(END)
+
+# champly @ ChamPlydeMacBook-Pro in ~/src/go/learngit on git:develop o [22:34:14]
+$ git stash apply
+On branch develop
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git checkout -- <file>..." to discard changes in working directory)
+
+	modified:   readme.txt
+
+no changes added to commit (use "git add" and/or "git commit -a")
+
+# champly @ ChamPlydeMacBook-Pro in ~/src/go/learngit on git:develop x [22:34:19]
+$ git stash drop
+Dropped refs/stash@{0} (011f14fc4edc713c933c526a3808275d17e242b7)
+======================================================
+
+工作现场还在，git把stash内容存在某个地方了恢复可以使用git stash apply(恢复) + git stash drop(删除)
+另外一种方式就是git stash pop
+======================================================
+# champly @ ChamPlydeMacBook-Pro in ~/src/go/learngit on git:develop x [22:34:43]
+$ git stash
+Saved working directory and index state WIP on develop: 6aa11ea conflict fixed
+HEAD is now at 6aa11ea conflict fixed
+
+# champly @ ChamPlydeMacBook-Pro in ~/src/go/learngit on git:develop o [22:35:04]
+$ git stash pop
+On branch develop
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git checkout -- <file>..." to discard changes in working directory)
+
+	modified:   readme.txt
+
+no changes added to commit (use "git add" and/or "git commit -a")
+Dropped refs/stash@{0} (29581d03d69cde7e5407f8fbe260e907ab2896ac)
+======================================================
+git stash隐藏修改，git stash pop恢复修改
+
+
+git branch -D name 删除分支，丢弃修改，强行删除
+
+
+git 查看远程仓库信息：
+======================================================
+# champly @ ChamPlydeMacBook-Pro in ~/src/go/learngit on git:develop x [22:38:04]
+$ git remote
+origin
+
+# champly @ ChamPlydeMacBook-Pro in ~/src/go/learngit on git:develop x [22:40:33]
+$ git remote -v
+origin	git@github.com:ChamPly/learngit.git (fetch)
+origin	git@github.com:ChamPly/learngit.git (push)
+======================================================
+如果没有推送权限，就看不到push的地址
+
+从本地推送分支，使用git push origin branch-name，如果推送失败，先用git pull抓取远程的新提交
+建立本地分支和远程分支的关联，使用 git branch --set-upstream branch-name origin/branch-name
+
+git添加标签：
+======================================================
+# champly @ ChamPlydeMacBook-Pro in ~/src/go/learngit on git:develop x [22:42:31]
+$ git tag v1.0
+
+# champly @ ChamPlydeMacBook-Pro in ~/src/go/learngit on git:develop x [22:47:57]
+$ git tag
+v1.0
+======================================================
+                                                      2017年8月20日
+                                                        by:ChamPly
